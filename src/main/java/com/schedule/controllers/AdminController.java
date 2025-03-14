@@ -2,7 +2,6 @@ package com.schedule.controllers;
 
 import com.schedule.models.ScheduleEntry;
 import com.schedule.models.StudentGroup;
-import com.schedule.models.Subject;
 import com.schedule.models.User;
 import com.schedule.models.UserRole;
 import com.schedule.service.ScheduleService;

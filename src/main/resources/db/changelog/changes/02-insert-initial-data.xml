@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.5.xsd">
+
+  <changeSet id="02" author="schedule">
+    <!-- Добавление пользователей -->
+    <insert tableName="users">
+      <column name="username">admin</column>
+      <column name="password">$2a$10$yfIHMg3mFFJQZQMEUgCmxeRl7NbD.dQvHmNHECZYCGEOBJKdqVQOi</column> <!--
+      admin123 -->
+      <column name="full_name">Администратор системы</column>
+      <column name="role">DISPATCHER</column>
+      <column name="email">admin@example.com</column>
+      <column name="phone_number">+7 (999) 123-45-67</column>
+    </insert>
+
+    <insert tableName="users">
+      <column name="username">teacher</column>
+      <column name="password">$2a$10$yfIHMg3mFFJQZQMEUgCmxeRl7NbD.dQvHmNHECZYCGEOBJKdqVQOi</column> <!--
+      teacher123 -->
+      <column name="full_name">Иванов Иван Иванович</column>
+      <column name="role">TEACHER</column>
+      <column name="email">ivanov@example.com</column>
+      <column name="phone_number">+7 (999) 765-43-21</column>
+    </insert>
+
+    <insert tableName="users">
+      <column name="username">teacher2</column>
+      <column name="password">$2a$10$yfIHMg3mFFJQZQMEUgCmxeRl7NbD.dQvHmNHECZYCGEOBJKdqVQOi</column> <!--
+      teacher123 -->
+      <column name="full_name">Петров Петр Петрович</column>
+      <column name="role">TEACHER</column>
+      <column name="email">petrov@example.com</column>
+      <column name="phone_number">+7 (999) 111-22-33</column>
+    </insert>
+
+    <!-- Добавление групп студентов -->
+    <insert tableName="student_groups">
+      <column name="name">110101</column>
+      <column name="year">1</column>
+      <column name="faculty">Информационные технологии</column>
+      <column name="specialization">Информационные системы</column>
+      <column name="number_of_students">25</column>
+    </insert>
+
+    <insert tableName="student_groups">
+      <column name="name">123426</column>
+      <column name="year">2</column>
+      <column name="faculty">Информационные технологии</column>
+      <column name="specialization">Информационные системы</column>
+      <column name="number_of_students">22</column>
+    </insert>
+
+    <insert tableName="student_groups">
+      <column name="name">435755</column>
+      <column name="year">3</column>
+      <column name="faculty">Информационные технологии</column>
+      <column name="specialization">Программная инженерия</column>
+      <column name="number_of_students">18</column>
+    </insert>
+
+    <!-- Добавление предметов -->
+    <insert tableName="subjects">
+      <column name="name">Математический анализ</column>
+      <column name="description">Основы математического анализа</column>
+      <column name="hours_per_semester">72</column>
+      <column name="department">Кафедра высшей математики</column>
+    </insert>
+
+    <insert tableName="subjects">
+      <column name="name">Программирование</column>
+      <column name="description">Основы программирования на Java</column>
+      <column name="hours_per_semester">108</column>
+      <column name="department">Кафедра информационных технологий</column>
+    </insert>
+
+    <insert tableName="subjects">
+      <column name="name">Базы данных</column>
+      <column name="description">Проектирование и разработка баз данных</column>
+      <column name="hours_per_semester">90</column>
+      <column name="department">Кафедра информационных технологий</column>
+    </insert>
+
+    <insert tableName="subjects">
+      <column name="name">Операционные системы</column>
+      <column name="description">Основы операционных систем</column>
+      <column name="hours_per_semester">72</column>
+      <column name="department">Кафедра информационных технологий</column>
+    </insert>
+
+    <!-- Добавление аудиторий -->
+    <insert tableName="classrooms">
+      <column name="number">101</column>
+      <column name="building">Главный корпус</column>
+      <column name="capacity">30</column>
+      <column name="has_projector">true</column>
+      <column name="has_computers">false</column>
+      <column name="type">LECTURE_HALL</column>
+    </insert>
+
+    <insert tableName="classrooms">
+      <column name="number">201</column>
+      <column name="building">Главный корпус</column>
+      <column name="capacity">25</column>
+      <column name="has_projector">true</column>
+      <column name="has_computers">true</column>
+      <column name="type">COMPUTER_LAB</column>
+    </insert>
+
+    <insert tableName="classrooms">
+      <column name="number">301</column>
+      <column name="building">Главный корпус</column>
+      <column name="capacity">20</column>
+      <column name="has_projector">false</column>
+      <column name="has_computers">false</column>
+      <column name="type">SEMINAR_ROOM</column>
+    </insert>
+
+    <!-- Добавление семестров -->
+    <insert tableName="semesters">
+      <column name="name">Осенний семестр 2023/2024</column>
+      <column name="start_date">2023-09-01</column>
+      <column name="end_date">2023-12-31</column>
+      <column name="academic_year">2023</column>
+      <column name="type">FALL</column>
+    </insert>
+
+    <insert tableName="semesters">
+      <column name="name">Весенний семестр 2023/2024</column>
+      <column name="start_date">2024-02-01</column>
+      <column name="end_date">2024-06-30</column>
+      <column name="academic_year">2024</column>
+      <column name="type">SPRING</column>
+    </insert>
+
+    <!-- Добавление записей расписания -->
+    <insert tableName="schedule_entries">
+      <column name="subject_id">1</column> <!-- Математический анализ -->
+      <column name="teacher_id">2</column> <!-- Иванов И.И. -->
+      <column name="group_id">1</column> <!-- ИС-11 -->
+      <column name="classroom_id">1</column> <!-- 101 -->
+      <column name="semester_id">1</column> <!-- Осенний семестр 2023/2024 -->
+      <column name="day_of_week">MONDAY</column>
+      <column name="start_time">09:00:00</column>
+      <column name="end_time">10:30:00</column>
+      <column name="lesson_type">LECTURE</column>
+      <column name="is_regular">true</column>
+      <column name="comment">Лекция по математическому анализу</column>
+    </insert>
+
+    <insert tableName="schedule_entries">
+      <column name="subject_id">2</column> <!-- Программирование -->
+      <column name="teacher_id">3</column> <!-- Петров П.П. -->
+      <column name="group_id">1</column> <!-- ИС-11 -->
+      <column name="classroom_id">2</column> <!-- 201 -->
+      <column name="semester_id">1</column> <!-- Осенний семестр 2023/2024 -->
+      <column name="day_of_week">MONDAY</column>
+      <column name="start_time">10:45:00</column>
+      <column name="end_time">12:15:00</column>
+      <column name="lesson_type">LABORATORY</column>
+      <column name="is_regular">true</column>
+      <column name="comment">Лабораторная работа по программированию</column>
+    </insert>
+
+    <insert tableName="schedule_entries">
+      <column name="subject_id">3</column> <!-- Базы данных -->
+      <column name="teacher_id">2</column> <!-- Иванов И.И. -->
+      <column name="group_id">2</column> <!-- ИС-21 -->
+      <column name="classroom_id">2</column> <!-- 201 -->
+      <column name="semester_id">1</column> <!-- Осенний семестр 2023/2024 -->
+      <column name="day_of_week">TUESDAY</column>
+      <column name="start_time">09:00:00</column>
+      <column name="end_time">10:30:00</column>
+      <column name="lesson_type">LECTURE</column>
+      <column name="is_regular">true</column>
+      <column name="comment">Лекция по базам данных</column>
+    </insert>
+
+    <insert tableName="schedule_entries">
+      <column name="subject_id">4</column> <!-- Операционные системы -->
+      <column name="teacher_id">3</column> <!-- Петров П.П. -->
+      <column name="group_id">3</column> <!-- ПИ-31 -->
+      <column name="classroom_id">3</column> <!-- 301 -->
+      <column name="semester_id">1</column> <!-- Осенний семестр 2023/2024 -->
+      <column name="day_of_week">WEDNESDAY</column>
+      <column name="start_time">13:30:00</column>
+      <column name="end_time">15:00:00</column>
+      <column name="lesson_type">SEMINAR</column>
+      <column name="is_regular">true</column>
+      <column name="comment">Семинар по операционным системам</column>
+    </insert>
+  </changeSet>
+</databaseChangeLog> 

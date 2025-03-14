@@ -21,7 +21,7 @@ spring:
   # Настройки инициализации БД
   sql:
     init:
-      mode: always
+      mode: never
       continue-on-error: true
 
   jpa:
@@ -31,11 +31,11 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-    defer-datasource-initialization: true
+    defer-datasource-initialization: false
 
-#  liquibase:
-#    change-log: db/changelog/main-changelog.xml
-#    enabled: true
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml
+    enabled: true
 
 server:
   port: 8080

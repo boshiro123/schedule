@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.5.xsd">
+
+  <changeSet id="01" author="schedule">
+    <!-- Создание таблицы пользователей -->
+    <createTable tableName="users">
+      <column name="id" type="BIGINT" autoIncrement="true">
+        <constraints primaryKey="true" nullable="false" />
+      </column>
+      <column name="username" type="VARCHAR(50)">
+        <constraints unique="true" nullable="false" />
+      </column>
+      <column name="password" type="VARCHAR(255)">
+        <constraints nullable="false" />
+      </column>
+      <column name="full_name" type="VARCHAR(100)">
+        <constraints nullable="false" />
+      </column>
+      <column name="role" type="VARCHAR(20)">
+        <constraints nullable="false" />
+      </column>
+      <column name="email" type="VARCHAR(100)" />
+      <column name="phone_number" type="VARCHAR(20)" />
+      <column name="group_id" type="BIGINT" />
+    </createTable>
+
+    <!-- Создание таблицы групп студентов -->
+    <createTable tableName="student_groups">
+      <column name="id" type="BIGINT" autoIncrement="true">
+        <constraints primaryKey="true" nullable="false" />
+      </column>
+      <column name="name" type="VARCHAR(50)">
+        <constraints unique="true" nullable="false" />
+      </column>
+      <column name="year" type="INT">
+        <constraints nullable="false" />
+      </column>
+      <column name="faculty" type="VARCHAR(100)">
+        <constraints nullable="false" />
+      </column>
+      <column name="specialization" type="VARCHAR(100)">
+        <constraints nullable="false" />
+      </column>
+      <column name="number_of_students" type="INT" />
+    </createTable>
+
+    <!-- Создание таблицы предметов -->
+    <createTable tableName="subjects">
+      <column name="id" type="BIGINT" autoIncrement="true">
+        <constraints primaryKey="true" nullable="false" />
+      </column>
+      <column name="name" type="VARCHAR(100)">
+        <constraints nullable="false" />
+      </column>
+      <column name="description" type="VARCHAR(500)" />
+      <column name="hours_per_semester" type="INT" />
+      <column name="department" type="VARCHAR(100)" />
+    </createTable>
+
+    <!-- Создание таблицы аудиторий -->
+    <createTable tableName="classrooms">
+      <column name="id" type="BIGINT" autoIncrement="true">
+        <constraints primaryKey="true" nullable="false" />
+      </column>
+      <column name="number" type="VARCHAR(20)">
+        <constraints nullable="false" unique="true" />
+      </column>
+      <column name="building" type="VARCHAR(50)" />
+      <column name="capacity" type="INT" />
+      <column name="has_projector" type="BOOLEAN" />
+      <column name="has_computers" type="BOOLEAN" />
+      <column name="type" type="VARCHAR(20)" />
+    </createTable>
+
+    <!-- Создание таблицы семестров -->
+    <createTable tableName="semesters">
+      <column name="id" type="BIGINT" autoIncrement="true">
+        <constraints primaryKey="true" nullable="false" />
+      </column>
+      <column name="name" type="VARCHAR(50)">
+        <constraints nullable="false" />
+      </column>
+      <column name="start_date" type="DATE">
+        <constraints nullable="false" />
+      </column>
+      <column name="end_date" type="DATE">
+        <constraints nullable="false" />
+      </column>
+      <column name="academic_year" type="INT">
+        <constraints nullable="false" />
+      </column>
+      <column name="type" type="VARCHAR(20)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <!-- Создание таблицы записей расписания -->
+    <createTable tableName="schedule_entries">
+      <column name="id" type="BIGINT" autoIncrement="true">
+        <constraints primaryKey="true" nullable="false" />
+      </column>
+      <column name="subject_id" type="BIGINT">
+        <constraints nullable="false" foreignKeyName="fk_schedule_subject" references="subjects(id)" />
+      </column>
+      <column name="teacher_id" type="BIGINT">
+        <constraints nullable="false" foreignKeyName="fk_schedule_teacher" references="users(id)" />
+      </column>
+      <column name="group_id" type="BIGINT">
+        <constraints nullable="false" foreignKeyName="fk_schedule_group"
+          references="student_groups(id)" />
+      </column>
+      <column name="classroom_id" type="BIGINT">
+        <constraints nullable="false" foreignKeyName="fk_schedule_classroom"
+          references="classrooms(id)" />
+      </column>
+      <column name="semester_id" type="BIGINT">
+        <constraints nullable="false" foreignKeyName="fk_schedule_semester"
+          references="semesters(id)" />
+      </column>
+      <column name="day_of_week" type="VARCHAR(20)">
+        <constraints nullable="false" />
+      </column>
+      <column name="start_time" type="TIME">
+        <constraints nullable="false" />
+      </column>
+      <column name="end_time" type="TIME">
+        <constraints nullable="false" />
+      </column>
+      <column name="specific_date" type="DATE" />
+      <column name="lesson_type" type="VARCHAR(20)">
+        <constraints nullable="false" />
+      </column>
+      <column name="is_regular" type="BOOLEAN">
+        <constraints nullable="false" />
+      </column>
+      <column name="comment" type="VARCHAR(500)" />
+    </createTable>
+
+    <!-- Добавление внешнего ключа для связи студентов с группами -->
+    <addForeignKeyConstraint baseTableName="users" baseColumnNames="group_id"
+      constraintName="fk_user_group"
+      referencedTableName="student_groups"
+      referencedColumnNames="id" />
+  </changeSet>
+</databaseChangeLog> 

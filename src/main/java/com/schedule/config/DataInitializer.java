@@ -1,24 +1,27 @@
 package com.schedule.config;
 
-import com.schedule.models.UserRole;
 import com.schedule.service.UserService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.context.annotation.Profile;
 
 @Configuration
 public class DataInitializer {
 
   private final UserService userService;
-  private final PasswordEncoder passwordEncoder;
 
-  public DataInitializer(UserService userService, PasswordEncoder passwordEncoder) {
+  public DataInitializer(UserService userService) {
     this.userService = userService;
-    this.passwordEncoder = passwordEncoder;
   }
 
+  /**
+   * Этот метод отключен, так как инициализация данных теперь выполняется через
+   * Liquibase.
+   * Оставлен в качестве примера для ручной инициализации данных.
+   */
   @Bean
+  @Profile("manual-init") // Этот бин будет активирован только с профилем manual-init
   public CommandLineRunner initData() {
     return args -> {
       // Проверяем, есть ли уже диспетчер в системе

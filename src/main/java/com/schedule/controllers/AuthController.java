@@ -1,7 +1,6 @@
 package com.schedule.controllers;
 
 import com.schedule.models.User;
-import com.schedule.models.UserRole;
 import com.schedule.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
