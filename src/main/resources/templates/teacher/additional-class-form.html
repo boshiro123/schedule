@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title
+      th:text="${additionalClass.id == null ? 'Добавление дополнительного занятия' : 'Редактирование дополнительного занятия'}"
+    ></title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css"
+    />
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+      <div class="container">
+        <a class="navbar-brand" href="/">Расписание ВУЗа</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav me-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="/teacher/schedule">Моё расписание</a>
+            </li>
+          </ul>
+          <div class="d-flex">
+            <span
+              class="navbar-text me-3 text-white"
+              th:text="${additionalClass.teacher.fullName}"
+            ></span>
+            <form th:action="@{/logout}" method="post">
+              <button class="btn btn-outline-light" type="submit">Выйти</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container mt-4">
+      <div class="row mb-4">
+        <div class="col">
+          <h1
+            th:text="${additionalClass.id == null ? 'Добавление дополнительного занятия' : 'Редактирование дополнительного занятия'}"
+          ></h1>
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item">
+                <a href="/teacher/schedule">Моё расписание</a>
+              </li>
+              <li
+                class="breadcrumb-item active"
+                aria-current="page"
+                th:text="${additionalClass.id == null ? 'Добавление дополнительного занятия' : 'Редактирование дополнительного занятия'}"
+              ></li>
+            </ol>
+          </nav>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-8">
+          <div class="card">
+            <div class="card-header bg-primary text-white">
+              <h5 class="mb-0">Информация о дополнительном занятии</h5>
+            </div>
+            <div class="card-body">
+              <form
+                th:action="@{/teacher/additional-class}"
+                method="post"
+                th:object="${additionalClass}"
+              >
+                <input type="hidden" th:field="*{id}" />
+
+                <div class="mb-3">
+                  <label for="subject" class="form-label">Предмет</label>
+                  <select
+                    class="form-select"
+                    id="subject"
+                    th:field="*{subject}"
+                    required
+                  >
+                    <option value="">Выберите предмет</option>
+                    <option
+                      th:each="subject : ${subjects}"
+                      th:value="${subject.id}"
+                      th:text="${subject.name}"
+                    ></option>
+                  </select>
+                  <div
+                    class="invalid-feedback"
+                    th:if="${#fields.hasErrors('subject')}"
+                    th:errors="*{subject}"
+                  ></div>
+                </div>
+
+                <div class="mb-3">
+                  <label for="group" class="form-label">Группа</label>
+                  <select
+                    class="form-select"
+                    id="group"
+                    th:field="*{group}"
+                    required
+                  >
+                    <option value="">Выберите группу</option>
+                    <option
+                      th:each="group : ${groups}"
+                      th:value="${group.id}"
+                      th:text="${group.name + ' (' + group.faculty + ', ' + group.specialization + ')'}"
+                    ></option>
+                  </select>
+                  <div
+                    class="invalid-feedback"
+                    th:if="${#fields.hasErrors('group')}"
+                    th:errors="*{group}"
+                  ></div>
+                  <div
+                    class="text-danger"
+                    th:if="${groupError}"
+                    th:text="${groupError}"
+                  ></div>
+                </div>
+
+                <div class="mb-3">
+                  <label for="classroom" class="form-label">Аудитория</label>
+                  <select
+                    class="form-select"
+                    id="classroom"
+                    th:field="*{classroom}"
+                    required
+                  >
+                    <option value="">Выберите аудиторию</option>
+                    <option
+                      th:each="classroom : ${classrooms}"
+                      th:value="${classroom.id}"
+                      th:text="${classroom.number + ' (' + classroom.building + ', вместимость: ' + classroom.capacity + ')'}"
+                    ></option>
+                  </select>
+                  <div
+                    class="invalid-feedback"
+                    th:if="${#fields.hasErrors('classroom')}"
+                    th:errors="*{classroom}"
+                  ></div>
+                  <div
+                    class="text-danger"
+                    th:if="${classroomError}"
+                    th:text="${classroomError}"
+                  ></div>
+                </div>
+
+                <div class="mb-3">
+                  <label for="specificDate" class="form-label"
+                    >Дата занятия</label
+                  >
+                  <input
+                    type="date"
+                    class="form-control"
+                    id="specificDate"
+                    th:field="*{specificDate}"
+                    required
+                  />
+                  <div
+                    class="invalid-feedback"
+                    th:if="${#fields.hasErrors('specificDate')}"
+                    th:errors="*{specificDate}"
+                  ></div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="startTime" class="form-label"
+                      >Время начала</label
+                    >
+                    <input
+                      type="time"
+                      class="form-control"
+                      id="startTime"
+                      th:field="*{startTime}"
+                      required
+                    />
+                    <div
+                      class="invalid-feedback"
+                      th:if="${#fields.hasErrors('startTime')}"
+                      th:errors="*{startTime}"
+                    ></div>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label for="endTime" class="form-label"
+                      >Время окончания</label
+                    >
+                    <input
+                      type="time"
+                      class="form-control"
+                      id="endTime"
+                      th:field="*{endTime}"
+                      required
+                    />
+                    <div
+                      class="invalid-feedback"
+                      th:if="${#fields.hasErrors('endTime')}"
+                      th:errors="*{endTime}"
+                    ></div>
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <label for="comment" class="form-label">Комментарий</label>
+                  <textarea
+                    class="form-control"
+                    id="comment"
+                    th:field="*{comment}"
+                    rows="3"
+                  ></textarea>
+                  <div
+                    class="invalid-feedback"
+                    th:if="${#fields.hasErrors('comment')}"
+                    th:errors="*{comment}"
+                  ></div>
+                </div>
+
+                <div class="text-end">
+                  <a
+                    th:href="@{/teacher/schedule}"
+                    class="btn btn-outline-secondary me-2"
+                    >Отмена</a
+                  >
+                  <button type="submit" class="btn btn-primary">
+                    Сохранить
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="card">
+            <div class="card-header bg-info text-white">
+              <h5 class="mb-0">Информация</h5>
+            </div>
+            <div class="card-body">
+              <p>
+                Дополнительные занятия позволяют вам проводить внеплановые
+                занятия, консультации или отработки с группами студентов.
+              </p>
+              <p>При создании дополнительного занятия система проверит:</p>
+              <ul>
+                <li>Доступность выбранной аудитории в указанное время</li>
+                <li>
+                  Отсутствие других занятий у выбранной группы в указанное время
+                </li>
+              </ul>
+              <p>
+                Вы можете редактировать или удалять только дополнительные
+                занятия, которые создали сами.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

@@ -24,20 +24,22 @@ public class SecurityConfig {
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http
+        .csrf(csrf -> csrf
+            .ignoringRequestMatchers("/login", "/api/utils/**")) // Отключаем CSRF для страницы входа и API утилит
         .authorizeHttpRequests(authorize -> authorize
             // Публичные страницы
             .requestMatchers("/", "/schedule/public/**", "/css/**", "/js/**", "/images/**", "/error").permitAll()
+            // API утилиты
+            .requestMatchers("/api/utils/**").permitAll()
             // Страницы для диспетчера (админа)
             .requestMatchers("/admin/**").hasAuthority(UserRole.DISPATCHER.name())
-            // Страницы для преподавателей
+            // Страницы для преподавателя
             .requestMatchers("/teacher/**").hasAuthority(UserRole.TEACHER.name())
-            // Страницы для авторизованных пользователей
-            .requestMatchers("/schedule/personal/**").authenticated()
-            // Все остальные запросы требуют аутентификации
+            // Остальные страницы требуют аутентификации
             .anyRequest().authenticated())
         .formLogin(form -> form
             .loginPage("/login")
-            .defaultSuccessUrl("/")
+            .defaultSuccessUrl("/dashboard")
             .permitAll())
         .logout(logout -> logout
             .logoutSuccessUrl("/")

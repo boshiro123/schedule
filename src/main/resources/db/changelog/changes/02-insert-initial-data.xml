@@ -8,7 +8,7 @@
     <!-- Добавление пользователей -->
     <insert tableName="users">
       <column name="username">admin</column>
-      <column name="password">$2a$10$yfIHMg3mFFJQZQMEUgCmxeRl7NbD.dQvHmNHECZYCGEOBJKdqVQOi</column> <!--
+      <column name="password">$2a$10$wCmdvKWgYiI6EWohfQeHs.9lLmFU20mP9ZWbFOrq1KbNtAS99rOR6</column> <!--
       admin123 -->
       <column name="full_name">Администратор системы</column>
       <column name="role">DISPATCHER</column>
@@ -18,7 +18,7 @@
 
     <insert tableName="users">
       <column name="username">teacher</column>
-      <column name="password">$2a$10$yfIHMg3mFFJQZQMEUgCmxeRl7NbD.dQvHmNHECZYCGEOBJKdqVQOi</column> <!--
+      <column name="password">$2a$10$D81ZkIQjBFw7KJt0miQuJu4B557G.YpCXoHKFXHWR1IldKQAG6ZCS</column> <!--
       teacher123 -->
       <column name="full_name">Иванов Иван Иванович</column>
       <column name="role">TEACHER</column>
@@ -28,7 +28,7 @@
 
     <insert tableName="users">
       <column name="username">teacher2</column>
-      <column name="password">$2a$10$yfIHMg3mFFJQZQMEUgCmxeRl7NbD.dQvHmNHECZYCGEOBJKdqVQOi</column> <!--
+      <column name="password">$2a$10$D81ZkIQjBFw7KJt0miQuJu4B557G.YpCXoHKFXHWR1IldKQAG6ZCS</column> <!--
       teacher123 -->
       <column name="full_name">Петров Петр Петрович</column>
       <column name="role">TEACHER</column>
