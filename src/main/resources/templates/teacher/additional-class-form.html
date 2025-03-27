@@ -35,6 +35,9 @@
             <li class="nav-item">
               <a class="nav-link" href="/teacher/schedule">Моё расписание</a>
             </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/change-password">Изменить пароль</a>
+            </li>
           </ul>
           <div class="d-flex">
             <span
@@ -83,6 +86,7 @@
                 th:object="${additionalClass}"
               >
                 <input type="hidden" th:field="*{id}" />
+                <input type="hidden" th:field="*{semester}" />
 
                 <div class="mb-3">
                   <label for="subject" class="form-label">Предмет</label>

@@ -6,6 +6,7 @@ import com.schedule.service.ScheduleService;
 import com.schedule.service.StudentGroupService;
 import com.schedule.service.SubjectService;
 import com.schedule.service.UserService;
+import com.schedule.service.SemesterService;
 import jakarta.validation.Valid;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -30,15 +31,17 @@ public class TeacherController {
   private final StudentGroupService studentGroupService;
   private final SubjectService subjectService;
   private final ClassroomService classroomService;
+  private final SemesterService semesterService;
 
   public TeacherController(ScheduleService scheduleService, UserService userService,
       StudentGroupService studentGroupService, SubjectService subjectService,
-      ClassroomService classroomService) {
+      ClassroomService classroomService, SemesterService semesterService) {
     this.scheduleService = scheduleService;
     this.userService = userService;
     this.studentGroupService = studentGroupService;
     this.subjectService = subjectService;
     this.classroomService = classroomService;
+    this.semesterService = semesterService;
   }
 
   @GetMapping("/schedule")
@@ -85,12 +88,17 @@ public class TeacherController {
     additionalClass.setLessonType(LessonType.ADDITIONAL);
     additionalClass.setIsRegular(false);
 
+    // Установка текущего семестра
+    Semester currentSemester = semesterService.findCurrentSemesterOrDefault();
+    additionalClass.setSemester(currentSemester);
+
     model.addAttribute("additionalClass", additionalClass);
     model.addAttribute("groups", studentGroupService.findAllGroups());
     model.addAttribute("subjects", subjectService.findAllSubjects());
     model.addAttribute("classrooms", classroomService.findAllClassrooms());
     model.addAttribute("dayOfWeekValues", DayOfWeek.values());
     model.addAttribute("lessonTypeValues", LessonType.values());
+    model.addAttribute("currentSemester", currentSemester);
 
     return "teacher/additional-class-form";
   }
@@ -121,6 +129,17 @@ public class TeacherController {
     additionalClass.setTeacher(teacher);
     additionalClass.setLessonType(LessonType.ADDITIONAL);
     additionalClass.setIsRegular(false);
+
+    // Если семестр не установлен, устанавливаем текущий семестр
+    if (additionalClass.getSemester() == null) {
+      Semester currentSemester = semesterService.findCurrentSemesterOrDefault();
+      additionalClass.setSemester(currentSemester);
+    }
+
+    // Установка дня недели на основе указанной даты
+    if (additionalClass.getSpecificDate() != null && additionalClass.getDayOfWeek() == null) {
+      additionalClass.setDayOfWeek(additionalClass.getSpecificDate().getDayOfWeek());
+    }
 
     // Проверяем доступность аудитории
     boolean isClassroomAvailable = scheduleService.isClassroomAvailable(
@@ -187,12 +206,19 @@ public class TeacherController {
         return "redirect:/teacher/schedule";
       }
 
+      // Если семестр не установлен, устанавливаем текущий семестр
+      if (additionalClass.getSemester() == null) {
+        Semester currentSemester = semesterService.findCurrentSemesterOrDefault();
+        additionalClass.setSemester(currentSemester);
+      }
+
       model.addAttribute("additionalClass", additionalClass);
       model.addAttribute("groups", studentGroupService.findAllGroups());
       model.addAttribute("subjects", subjectService.findAllSubjects());
       model.addAttribute("classrooms", classroomService.findAllClassrooms());
       model.addAttribute("dayOfWeekValues", DayOfWeek.values());
       model.addAttribute("lessonTypeValues", LessonType.values());
+      model.addAttribute("currentSemester", additionalClass.getSemester());
 
       return "teacher/additional-class-form";
     }
