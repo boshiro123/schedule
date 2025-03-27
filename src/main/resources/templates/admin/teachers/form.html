@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+  lang="ru"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title
+      th:text="${teacher.id == null ? 'Добавление преподавателя' : 'Редактирование преподавателя'}"
+    ></title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css"
+    />
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+      <div class="container">
+        <a class="navbar-brand" href="/">Расписание занятий</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav me-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="/">Главная</a>
+            </li>
+            <li class="nav-item" sec:authorize="hasAuthority('DISPATCHER')">
+              <a class="nav-link" th:href="@{/admin/dashboard}"
+                >Панель администратора</a
+              >
+            </li>
+          </ul>
+          <ul class="navbar-nav">
+            <li class="nav-item" sec:authorize="isAuthenticated()">
+              <a class="nav-link" th:href="@{/change-password}"
+                >Изменить пароль</a
+              >
+            </li>
+            <li class="nav-item" sec:authorize="isAuthenticated()">
+              <a class="nav-link" th:href="@{/logout}">Выйти</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container mt-4">
+      <div class="row mb-4">
+        <div class="col">
+          <h1
+            th:text="${teacher.id == null ? 'Добавление преподавателя' : 'Редактирование преподавателя'}"
+          ></h1>
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item">
+                <a th:href="@{/admin/dashboard}">Панель администратора</a>
+              </li>
+              <li class="breadcrumb-item">
+                <a th:href="@{/admin/teachers}">Преподаватели</a>
+              </li>
+              <li
+                class="breadcrumb-item active"
+                aria-current="page"
+                th:text="${teacher.id == null ? 'Добавление' : 'Редактирование'}"
+              ></li>
+            </ol>
+          </nav>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-8">
+          <div class="card">
+            <div class="card-header bg-primary text-white">
+              <h5 class="mb-0">Информация о преподавателе</h5>
+            </div>
+            <div class="card-body">
+              <form
+                th:action="@{/admin/teachers}"
+                method="post"
+                th:object="${teacher}"
+              >
+                <input type="hidden" th:field="*{id}" />
+
+                <!-- ФИО преподавателя -->
+                <div class="mb-3">
+                  <label for="fullName" class="form-label"
+                    >ФИО преподавателя</label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="fullName"
+                    th:field="*{fullName}"
+                    required
+                  />
+                  <div
+                    class="invalid-feedback"
+                    th:if="${#fields.hasErrors('fullName')}"
+                    th:errors="*{fullName}"
+                  ></div>
+                </div>
+
+                <!-- Логин (имя пользователя) -->
+                <div class="mb-3">
+                  <label for="username" class="form-label">Логин</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="username"
+                    th:field="*{username}"
+                    th:readonly="${teacher.id != null}"
+                    required
+                  />
+                  <div
+                    class="invalid-feedback"
+                    th:if="${#fields.hasErrors('username')}"
+                    th:errors="*{username}"
+                  ></div>
+                  <div
+                    class="text-danger"
+                    th:if="${usernameError}"
+                    th:text="${usernameError}"
+                  ></div>
+                  <small class="text-muted" th:if="${teacher.id == null}">
+                    Логин должен быть уникальным и будет использоваться для
+                    входа в систему.
+                  </small>
+                </div>
+
+                <!-- Пароль -->
+                <div class="mb-3" th:if="${teacher.id == null}">
+                  <label for="password" class="form-label">Пароль</label>
+                  <input
+                    type="password"
+                    class="form-control"
+                    id="password"
+                    th:field="*{password}"
+                    required
+                  />
+                  <div
+                    class="invalid-feedback"
+                    th:if="${#fields.hasErrors('password')}"
+                    th:errors="*{password}"
+                  ></div>
+                </div>
+
+                <div class="mb-3" th:if="${teacher.id != null}">
+                  <label for="password" class="form-label"
+                    >Новый пароль (оставьте пустым, если не хотите
+                    менять)</label
+                  >
+                  <input
+                    type="password"
+                    class="form-control"
+                    id="password"
+                    th:field="*{password}"
+                  />
+                  <div
+                    class="invalid-feedback"
+                    th:if="${#fields.hasErrors('password')}"
+                    th:errors="*{password}"
+                  ></div>
+                </div>
+
+                <!-- Email -->
+                <div class="mb-3">
+                  <label for="email" class="form-label">Email</label>
+                  <input
+                    type="email"
+                    class="form-control"
+                    id="email"
+                    th:field="*{email}"
+                  />
+                  <div
+                    class="invalid-feedback"
+                    th:if="${#fields.hasErrors('email')}"
+                    th:errors="*{email}"
+                  ></div>
+                </div>
+
+                <!-- Телефон -->
+                <div class="mb-3">
+                  <label for="phoneNumber" class="form-label">Телефон</label>
+                  <input
+                    type="tel"
+                    class="form-control"
+                    id="phoneNumber"
+                    th:field="*{phoneNumber}"
+                  />
+                  <div
+                    class="invalid-feedback"
+                    th:if="${#fields.hasErrors('phoneNumber')}"
+                    th:errors="*{phoneNumber}"
+                  ></div>
+                </div>
+
+                <!-- Скрытое поле для роли -->
+                <input
+                  type="hidden"
+                  th:field="*{role}"
+                  th:value="${T(com.schedule.models.UserRole).TEACHER}"
+                />
+
+                <div class="text-end mt-4">
+                  <a
+                    th:href="@{/admin/teachers}"
+                    class="btn btn-outline-secondary me-2"
+                    >Отмена</a
+                  >
+                  <button type="submit" class="btn btn-primary">
+                    Сохранить
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="card">
+            <div class="card-header bg-info text-white">
+              <h5 class="mb-0">Информация</h5>
+            </div>
+            <div class="card-body">
+              <p>Введите информацию о преподавателе:</p>
+              <ul>
+                <li>ФИО преподавателя должно быть указано полностью</li>
+                <li>Логин будет использоваться для входа в систему</li>
+                <li>Пароль должен быть надежным</li>
+                <li>Email и телефон используются для связи с преподавателем</li>
+              </ul>
+              <p th:if="${teacher.id != null}" class="mb-0">
+                Если вы не хотите менять пароль преподавателя, оставьте поле
+                пароля пустым.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="bg-dark text-white mt-5 py-3">
+      <div class="container text-center">
+        <p class="mb-0">&copy; 2023 Система расписания занятий</p>
+      </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

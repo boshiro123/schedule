@@ -70,14 +70,41 @@ public class AdminController {
   @PostMapping("/teachers")
   public String saveTeacher(@Valid @ModelAttribute("teacher") User teacher,
       BindingResult bindingResult,
-      RedirectAttributes redirectAttributes) {
+      RedirectAttributes redirectAttributes,
+      Model model) {
     if (bindingResult.hasErrors()) {
       return "admin/teachers/form";
     }
 
     teacher.setRole(UserRole.TEACHER);
-    userService.createUser(teacher);
-    redirectAttributes.addFlashAttribute("success", "Преподаватель успешно добавлен");
+
+    // Проверяем, новый преподаватель или существующий
+    if (teacher.getId() != null) {
+      // Если редактируем существующего преподавателя
+      Optional<User> existingTeacher = userService.findUserById(teacher.getId());
+      if (existingTeacher.isPresent()) {
+        // Если пароль пустой, используем существующий пароль
+        if (teacher.getPassword() == null || teacher.getPassword().isEmpty()) {
+          teacher.setPassword(existingTeacher.get().getPassword());
+          userService.updateUser(teacher);
+        } else {
+          // Если указан новый пароль, обновляем с шифрованием
+          userService.updateUser(teacher);
+        }
+        redirectAttributes.addFlashAttribute("success", "Преподаватель успешно обновлен");
+      } else {
+        redirectAttributes.addFlashAttribute("error", "Преподаватель не найден");
+      }
+    } else {
+      // Если добавляем нового преподавателя, проверяем уникальность логина
+      if (userService.existsByUsername(teacher.getUsername())) {
+        model.addAttribute("usernameError", "Пользователь с таким логином уже существует");
+        return "admin/teachers/form";
+      }
+      userService.createUser(teacher);
+      redirectAttributes.addFlashAttribute("success", "Преподаватель успешно добавлен");
+    }
+
     return "redirect:/admin/teachers";
   }
 
@@ -95,8 +122,21 @@ public class AdminController {
   public String deleteTeacher(@PathVariable Long id, RedirectAttributes redirectAttributes) {
     Optional<User> teacherOpt = userService.findUserById(id);
     if (teacherOpt.isPresent() && teacherOpt.get().getRole() == UserRole.TEACHER) {
+      User teacher = teacherOpt.get();
+
+      // Проверяем, есть ли занятия у преподавателя
+      List<ScheduleEntry> teacherSchedule = scheduleService.findScheduleForTeacher(teacher);
+      if (!teacherSchedule.isEmpty()) {
+        redirectAttributes.addFlashAttribute("error",
+            "Невозможно удалить преподавателя, так как у него есть запланированные занятия. " +
+                "Сначала удалите все занятия этого преподавателя.");
+        return "redirect:/admin/teachers";
+      }
+
       userService.deleteUser(id);
       redirectAttributes.addFlashAttribute("success", "Преподаватель успешно удален");
+    } else {
+      redirectAttributes.addFlashAttribute("error", "Преподаватель не найден");
     }
     return "redirect:/admin/teachers";
   }
