@@ -40,6 +40,14 @@ public class ScheduleController {
       StudentGroup group = groupOpt.get();
       List<ScheduleEntry> scheduleEntries = scheduleService.findScheduleForGroup(group);
 
+      // Обработка записей с null значениями в поле dayOfWeek
+      scheduleEntries.forEach(entry -> {
+        if (entry.getDayOfWeek() == null && entry.getSpecificDate() != null) {
+          // Если день недели не указан, но дата указана, определяем день недели из даты
+          entry.setDayOfWeek(entry.getSpecificDate().getDayOfWeek());
+        }
+      });
+
       model.addAttribute("group", group);
       model.addAttribute("scheduleEntries", scheduleEntries);
       return "schedule/group-schedule";

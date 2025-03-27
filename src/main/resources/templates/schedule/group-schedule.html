@@ -128,15 +128,21 @@
                   <tbody>
                     <tr
                       th:each="entry : ${scheduleEntries}"
-                      th:if="${entry.dayOfWeek == day}"
+                      th:if="${entry.dayOfWeek != null && entry.dayOfWeek == day}"
                     >
                       <td
                         th:text="${#temporals.format(entry.startTime, 'HH:mm')} + ' - ' + ${#temporals.format(entry.endTime, 'HH:mm')}"
                       >
                         Время
                       </td>
-                      <td th:text="${entry.subject.name}">Предмет</td>
-                      <td th:switch="${entry.lessonType.name()}">
+                      <td
+                        th:text="${entry.subject != null ? entry.subject.name : ''}"
+                      >
+                        Предмет
+                      </td>
+                      <td
+                        th:switch="${entry.lessonType != null ? entry.lessonType.name() : ''}"
+                      >
                         <span th:case="'LECTURE'">Лекция</span>
                         <span th:case="'SEMINAR'">Семинар</span>
                         <span th:case="'LABORATORY'">Лабораторная работа</span>
@@ -146,19 +152,24 @@
                         <span th:case="'ADDITIONAL'"
                           >Дополнительное занятие</span
                         >
+                        <span th:case="''">Не указан</span>
                       </td>
-                      <td th:text="${entry.teacher.fullName}">Преподаватель</td>
                       <td
-                        th:text="${entry.classroom.building + ' ' + entry.classroom.number}"
+                        th:text="${entry.teacher != null ? entry.teacher.fullName : ''}"
+                      >
+                        Преподаватель
+                      </td>
+                      <td
+                        th:text="${entry.classroom != null ? (entry.classroom.building + ' ' + entry.classroom.number) : ''}"
                       >
                         Аудитория
                       </td>
                     </tr>
-                    <tr
-                      th:if="${#lists.isEmpty(#arrays.asList(scheduleEntries).^[dayOfWeek == day])}"
+                    <!-- <tr
+                      th:if="${lists.isEmpty(#arrays.asList(scheduleEntries).[dayOfWeek != null && dayOfWeek == day])}"
                     >
                       <td colspan="5" class="text-center">Нет занятий</td>
-                    </tr>
+                    </tr> -->
                   </tbody>
                 </table>
               </div>
