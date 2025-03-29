@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+  lang="ru"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Управление расписанием</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css"
+    />
+    <style>
+      .table-actions {
+        white-space: nowrap;
+      }
+      .lesson-type-badge {
+        font-size: 0.8rem;
+      }
+      .regular-lesson {
+        border-left: 5px solid #0d6efd;
+      }
+      .specific-date-lesson {
+        border-left: 5px solid #ffc107;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+      <div class="container">
+        <a class="navbar-brand" href="/">Расписание занятий</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav me-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="/">Главная</a>
+            </li>
+            <li class="nav-item" sec:authorize="hasAuthority('DISPATCHER')">
+              <a class="nav-link" th:href="@{/admin/dashboard}"
+                >Панель администратора</a
+              >
+            </li>
+          </ul>
+          <ul class="navbar-nav">
+            <li class="nav-item" sec:authorize="isAuthenticated()">
+              <a class="nav-link" th:href="@{/change-password}"
+                >Изменить пароль</a
+              >
+            </li>
+            <li class="nav-item" sec:authorize="isAuthenticated()">
+              <a class="nav-link" th:href="@{/logout}">Выйти</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container mt-4">
+      <div class="row mb-4">
+        <div class="col-md-6">
+          <h1>Управление расписанием</h1>
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item">
+                <a th:href="@{/admin/dashboard}">Панель администратора</a>
+              </li>
+              <li class="breadcrumb-item active" aria-current="page">
+                Расписание
+              </li>
+            </ol>
+          </nav>
+        </div>
+        <div class="col-md-6 text-end">
+          <a th:href="@{/admin/schedule/new}" class="btn btn-primary">
+            <i class="bi bi-calendar-plus"></i> Добавить запись в расписание
+          </a>
+        </div>
+      </div>
+
+      <div
+        class="alert alert-success"
+        th:if="${success}"
+        th:text="${success}"
+      ></div>
+
+      <div class="alert alert-danger" th:if="${error}" th:text="${error}"></div>
+
+      <!-- Фильтры -->
+      <div class="card mb-4">
+        <div class="card-header bg-warning text-white">
+          <h5 class="mb-0">Фильтры</h5>
+        </div>
+        <div class="card-body">
+          <form id="filterForm" method="get" th:action="@{/admin/schedule}">
+            <div class="row">
+              <div class="col-md-3 mb-3">
+                <label for="teacherId" class="form-label">Преподаватель</label>
+                <select class="form-select" id="teacherId" name="teacherId">
+                  <option value="">Все преподаватели</option>
+                  <option
+                    th:each="teacher : ${teachers}"
+                    th:value="${teacher.id}"
+                    th:text="${teacher.fullName}"
+                    th:selected="${param.teacherId != null && param.teacherId[0] == teacher.id.toString()}"
+                  ></option>
+                </select>
+              </div>
+              <div class="col-md-3 mb-3">
+                <label for="groupId" class="form-label">Группа</label>
+                <select class="form-select" id="groupId" name="groupId">
+                  <option value="">Все группы</option>
+                  <option
+                    th:each="group : ${groups}"
+                    th:value="${group.id}"
+                    th:text="${group.name}"
+                    th:selected="${param.groupId != null && param.groupId[0] == group.id.toString()}"
+                  ></option>
+                </select>
+              </div>
+              <div class="col-md-3 mb-3">
+                <label for="subjectId" class="form-label">Предмет</label>
+                <select class="form-select" id="subjectId" name="subjectId">
+                  <option value="">Все предметы</option>
+                  <option
+                    th:each="subject : ${subjects}"
+                    th:value="${subject.id}"
+                    th:text="${subject.name}"
+                    th:selected="${param.subjectId != null && param.subjectId[0] == subject.id.toString()}"
+                  ></option>
+                </select>
+              </div>
+              <div class="col-md-3 mb-3">
+                <label for="lessonType" class="form-label">Тип занятия</label>
+                <select class="form-select" id="lessonType" name="lessonType">
+                  <option value="">Все типы</option>
+                  <option
+                    th:each="type : ${lessonTypes}"
+                    th:value="${type}"
+                    th:text="${type.displayName}"
+                    th:selected="${param.lessonType != null && param.lessonType[0] == type.name()}"
+                  ></option>
+                </select>
+              </div>
+            </div>
+            <div class="text-end">
+              <button type="submit" class="btn btn-warning text-white">
+                <i class="bi bi-funnel"></i> Применить фильтры
+              </button>
+              <a th:href="@{/admin/schedule}" class="btn btn-outline-secondary">
+                <i class="bi bi-x-circle"></i> Сбросить
+              </a>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header bg-warning text-white">
+          <h5 class="mb-0">Список записей расписания</h5>
+        </div>
+        <div class="card-body">
+          <div
+            th:if="${#lists.isEmpty(scheduleEntries)}"
+            class="alert alert-info"
+          >
+            <i class="bi bi-info-circle"></i> Записи в расписании не найдены.
+          </div>
+
+          <div
+            class="table-responsive"
+            th:unless="${#lists.isEmpty(scheduleEntries)}"
+          >
+            <table class="table table-striped table-hover">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Предмет</th>
+                  <th>Преподаватель</th>
+                  <th>Группа</th>
+                  <th>Аудитория</th>
+                  <th>Семестр</th>
+                  <th>День/Дата</th>
+                  <th>Время</th>
+                  <th>Тип занятия</th>
+                  <th>Действия</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  th:each="entry : ${scheduleEntries}"
+                  th:class="${entry.isRegular ? 'regular-lesson' : 'specific-date-lesson'}"
+                >
+                  <td th:text="${entry.id}"></td>
+                  <td th:text="${entry.subject.name}"></td>
+                  <td th:text="${entry.teacher.fullName}"></td>
+                  <td th:text="${entry.group.name}"></td>
+                  <td
+                    th:text="${entry.classroom.number + ' (' + entry.classroom.building + ')'}"
+                  ></td>
+                  <td th:text="${entry.semester.name}"></td>
+                  <td>
+                    <span
+                      th:if="${entry.isRegular}"
+                      th:text="${#strings.replace(entry.dayOfWeek, 'MONDAY', 'Понедельник')
+                        .replace('TUESDAY', 'Вторник')
+                        .replace('WEDNESDAY', 'Среда')
+                        .replace('THURSDAY', 'Четверг')
+                        .replace('FRIDAY', 'Пятница')
+                        .replace('SATURDAY', 'Суббота')
+                        .replace('SUNDAY', 'Воскресенье')}"
+                    >
+                    </span>
+                    <span
+                      th:unless="${entry.isRegular}"
+                      th:text="${#temporals.format(entry.specificDate, 'dd.MM.yyyy (E)')}"
+                    ></span>
+                  </td>
+                  <td
+                    th:text="${#temporals.format(entry.startTime, 'HH:mm') + ' - ' + #temporals.format(entry.endTime, 'HH:mm')}"
+                  ></td>
+                  <td>
+                    <span
+                      class="badge bg-primary lesson-type-badge"
+                      th:text="${entry.lessonType.displayName}"
+                    ></span>
+                    <span
+                      th:if="${!entry.isRegular}"
+                      class="badge bg-warning text-dark lesson-type-badge"
+                      >Разовое</span
+                    >
+                  </td>
+                  <td class="table-actions">
+                    <a
+                      th:href="@{/admin/schedule/edit/{id}(id=${entry.id})}"
+                      class="btn btn-sm btn-outline-primary me-1"
+                      title="Редактировать"
+                    >
+                      <i class="bi bi-pencil"></i>
+                    </a>
+                    <a
+                      th:href="@{/admin/schedule/delete/{id}(id=${entry.id})}"
+                      class="btn btn-sm btn-outline-danger"
+                      title="Удалить"
+                      onclick="return confirm('Вы уверены, что хотите удалить эту запись расписания?')"
+                    >
+                      <i class="bi bi-trash"></i>
+                    </a>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="bg-dark text-white mt-5 py-3">
+      <div class="container text-center">
+        <p class="mb-0">&copy; 2023 Система расписания занятий</p>
+      </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

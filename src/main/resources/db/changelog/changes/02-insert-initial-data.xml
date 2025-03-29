@@ -92,7 +92,7 @@
 
     <!-- Добавление аудиторий -->
     <insert tableName="classrooms">
-      <column name="number">101</column>
+      <column name="number">112</column>
       <column name="building">Главный корпус</column>
       <column name="capacity">30</column>
       <column name="has_projector">true</column>
@@ -118,6 +118,115 @@
       <column name="type">SEMINAR_ROOM</column>
     </insert>
 
+    <insert tableName="classrooms">
+      <column name="number">302</column>
+      <column name="building">Главный корпус</column>
+      <column name="capacity">25</column>
+      <column name="has_projector">true</column>
+      <column name="has_computers">false</column>
+      <column name="type">SEMINAR_ROOM</column>
+    </insert>
+
+    <insert tableName="classrooms">
+      <column name="number">303</column>
+      <column name="building">Главный корпус</column>
+      <column name="capacity">30</column>
+      <column name="has_projector">true</column>
+      <column name="has_computers">true</column>
+      <column name="type">COMPUTER_LAB</column>
+    </insert>
+
+    <insert tableName="classrooms">
+      <column name="number">304</column>
+      <column name="building">Главный корпус</column>
+      <column name="capacity">100</column>
+      <column name="has_projector">true</column>
+      <column name="has_computers">false</column>
+      <column name="type">LECTURE_HALL</column>
+    </insert>
+
+    <insert tableName="classrooms">
+      <column name="number">305</column>
+      <column name="building">Главный корпус</column>
+      <column name="capacity">15</column>
+      <column name="has_projector">false</column>
+      <column name="has_computers">false</column>
+      <column name="type">SEMINAR_ROOM</column>
+    </insert>
+
+    <insert tableName="classrooms">
+      <column name="number">401</column>
+      <column name="building">Главный корпус</column>
+      <column name="capacity">35</column>
+      <column name="has_projector">true</column>
+      <column name="has_computers">false</column>
+      <column name="type">SEMINAR_ROOM</column>
+    </insert>
+
+    <insert tableName="classrooms">
+      <column name="number">402</column>
+      <column name="building">Главный корпус</column>
+      <column name="capacity">25</column>
+      <column name="has_projector">true</column>
+      <column name="has_computers">true</column>
+      <column name="type">COMPUTER_LAB</column>
+    </insert>
+
+    <insert tableName="classrooms">
+      <column name="number">403</column>
+      <column name="building">Главный корпус</column>
+      <column name="capacity">120</column>
+      <column name="has_projector">true</column>
+      <column name="has_computers">false</column>
+      <column name="type">LECTURE_HALL</column>
+    </insert>
+
+    <insert tableName="classrooms">
+      <column name="number">101</column>
+      <column name="building">Корпус Б</column>
+      <column name="capacity">30</column>
+      <column name="has_projector">true</column>
+      <column name="has_computers">false</column>
+      <column name="type">SEMINAR_ROOM</column>
+    </insert>
+
+    <insert tableName="classrooms">
+      <column name="number">102</column>
+      <column name="building">Корпус Б</column>
+      <column name="capacity">20</column>
+      <column name="has_projector">false</column>
+      <column name="has_computers">true</column>
+      <column name="type">COMPUTER_LAB</column>
+    </insert>
+
+    <insert tableName="classrooms">
+      <column name="number">103</column>
+      <column name="building">Корпус Б</column>
+      <column name="capacity">80</column>
+      <column name="has_projector">true</column>
+      <column name="has_computers">false</column>
+      <column name="type">LECTURE_HALL</column>
+    </insert>
+
+    <insert tableName="classrooms">
+      <column name="number">222</column>
+      <column name="building">Корпус Б</column>
+      <column name="capacity">25</column>
+      <column name="has_projector">true</column>
+      <column name="has_computers">true</column>
+      <column name="type">COMPUTER_LAB</column>
+    </insert>
+
+    <insert tableName="classrooms">
+      <column name="number">202</column>
+      <column name="building">Корпус Б</column>
+      <column name="capacity">40</column>
+      <column name="has_projector">true</column>
+      <column name="has_computers">false</column>
+      <column name="type">SEMINAR_ROOM</column>
+    </insert>
+
+
     <!-- Добавление семестров -->
     <insert tableName="semesters">
       <column name="name">Осенний семестр 2023/2024</column>
@@ -132,6 +241,54 @@
       <column name="start_date">2024-02-01</column>
       <column name="end_date">2024-06-30</column>
       <column name="academic_year">2024</column>
+      <column name="type">SPRING</column>
+    </insert>
+
+    <insert tableName="semesters">
+      <column name="name">Осенний семестр 2024/2025</column>
+      <column name="start_date">2024-09-01</column>
+      <column name="end_date">2024-12-31</column>
+      <column name="academic_year">2024</column>
+      <column name="type">FALL</column>
+    </insert>
+
+    <insert tableName="semesters">
+      <column name="name">Весенний семестр 2024/2025</column>
+      <column name="start_date">2025-02-01</column>
+      <column name="end_date">2025-06-30</column>
+      <column name="academic_year">2025</column>
+      <column name="type">SPRING</column>
+    </insert>
+
+    <insert tableName="semesters">
+      <column name="name">Осенний семестр 2025/2026</column>
+      <column name="start_date">2025-09-01</column>
+      <column name="end_date">2025-12-31</column>
+      <column name="academic_year">2025</column>
+      <column name="type">FALL</column>
+    </insert>
+
+    <insert tableName="semesters">
+      <column name="name">Весенний семестр 2025/2026</column>
+      <column name="start_date">2026-02-01</column>
+      <column name="end_date">2026-06-30</column>
+      <column name="academic_year">2026</column>
+      <column name="type">SPRING</column>
+    </insert>
+
+    <insert tableName="semesters">
+      <column name="name">Осенний семестр 2026/2027</column>
+      <column name="start_date">2026-09-01</column>
+      <column name="end_date">2026-12-31</column>
+      <column name="academic_year">2026</column>
+      <column name="type">FALL</column>
+    </insert>
+
+    <insert tableName="semesters">
+      <column name="name">Весенний семестр 2026/2027</column>
+      <column name="start_date">2027-02-01</column>
+      <column name="end_date">2027-06-30</column>
+      <column name="academic_year">2027</column>
       <column name="type">SPRING</column>
     </insert>
 

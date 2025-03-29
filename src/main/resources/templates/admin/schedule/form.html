@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+  lang="ru"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title
+      th:text="${scheduleEntry.id == null ? 'Добавление записи в расписание' : 'Редактирование записи расписания'}"
+    ></title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css"
+    />
+    <style>
+      /* Стили для переключателя типа расписания */
+      .form-switch .form-check-input {
+        width: 3em;
+        height: 1.5em;
+      }
+      .form-switch .form-check-label {
+        margin-left: 0.5em;
+        font-weight: 500;
+      }
+      /* Скрытые блоки для регулярных и разовых занятий */
+      #regularScheduleContainer,
+      #specificDateContainer {
+        display: none;
+      }
+      #regularScheduleContainer.active,
+      #specificDateContainer.active {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+      <div class="container">
+        <a class="navbar-brand" href="/">Расписание занятий</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav me-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="/">Главная</a>
+            </li>
+            <li class="nav-item" sec:authorize="hasAuthority('DISPATCHER')">
+              <a class="nav-link" th:href="@{/admin/dashboard}"
+                >Панель администратора</a
+              >
+            </li>
+          </ul>
+          <ul class="navbar-nav">
+            <li class="nav-item" sec:authorize="isAuthenticated()">
+              <a class="nav-link" th:href="@{/change-password}"
+                >Изменить пароль</a
+              >
+            </li>
+            <li class="nav-item" sec:authorize="isAuthenticated()">
+              <a class="nav-link" th:href="@{/logout}">Выйти</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container mt-4">
+      <div class="row mb-4">
+        <div class="col">
+          <h1
+            th:text="${scheduleEntry.id == null ? 'Добавление записи в расписание' : 'Редактирование записи расписания'}"
+          ></h1>
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item">
+                <a th:href="@{/admin/dashboard}">Панель администратора</a>
+              </li>
+              <li class="breadcrumb-item">
+                <a th:href="@{/admin/schedule}">Расписание</a>
+              </li>
+              <li
+                class="breadcrumb-item active"
+                aria-current="page"
+                th:text="${scheduleEntry.id == null ? 'Добавление' : 'Редактирование'}"
+              ></li>
+            </ol>
+          </nav>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-8">
+          <div class="card">
+            <div class="card-header bg-warning text-white">
+              <h5 class="mb-0">Информация о занятии</h5>
+            </div>
+            <div class="card-body">
+              <form
+                th:action="@{/admin/schedule}"
+                method="post"
+                th:object="${scheduleEntry}"
+              >
+                <input type="hidden" th:field="*{id}" />
+
+                <!-- Основные параметры занятия -->
+                <div class="mb-3">
+                  <label for="subject" class="form-label">Предмет</label>
+                  <select
+                    class="form-select"
+                    id="subject"
+                    th:field="*{subject}"
+                    required
+                  >
+                    <option value="">Выберите предмет</option>
+                    <option
+                      th:each="subject : ${subjects}"
+                      th:value="${subject.id}"
+                      th:text="${subject.name}"
+                    ></option>
+                  </select>
+                  <div
+                    class="invalid-feedback"
+                    th:if="${#fields.hasErrors('subject')}"
+                    th:errors="*{subject}"
+                  ></div>
+                </div>
+
+                <div class="mb-3">
+                  <label for="teacher" class="form-label">Преподаватель</label>
+                  <select
+                    class="form-select"
+                    id="teacher"
+                    th:field="*{teacher}"
+                    required
+                  >
+                    <option value="">Выберите преподавателя</option>
+                    <option
+                      th:each="teacher : ${teachers}"
+                      th:value="${teacher.id}"
+                      th:text="${teacher.fullName}"
+                    ></option>
+                  </select>
+                  <div
+                    class="invalid-feedback"
+                    th:if="${#fields.hasErrors('teacher')}"
+                    th:errors="*{teacher}"
+                  ></div>
+                </div>
+
+                <div class="mb-3">
+                  <label for="group" class="form-label">Группа</label>
+                  <select
+                    class="form-select"
+                    id="group"
+                    th:field="*{group}"
+                    required
+                  >
+                    <option value="">Выберите группу</option>
+                    <option
+                      th:each="group : ${groups}"
+                      th:value="${group.id}"
+                      th:text="${group.name + ' (' + group.faculty + ', ' + group.specialization + ')'}"
+                    ></option>
+                  </select>
+                  <div
+                    class="invalid-feedback"
+                    th:if="${#fields.hasErrors('group')}"
+                    th:errors="*{group}"
+                  ></div>
+                </div>
+
+                <div class="mb-3">
+                  <label for="classroom" class="form-label">Аудитория</label>
+                  <select
+                    class="form-select"
+                    id="classroom"
+                    th:field="*{classroom}"
+                    required
+                  >
+                    <option value="">Выберите аудиторию</option>
+                    <option
+                      th:each="classroom : ${classrooms}"
+                      th:value="${classroom.id}"
+                      th:text="${classroom.number + ' (' + classroom.building + ', вместимость: ' + classroom.capacity + ')'}"
+                    ></option>
+                  </select>
+                  <div
+                    class="invalid-feedback"
+                    th:if="${#fields.hasErrors('classroom')}"
+                    th:errors="*{classroom}"
+                  ></div>
+                </div>
+
+                <div class="mb-3">
+                  <label for="lessonType" class="form-label">Тип занятия</label>
+                  <select
+                    class="form-select"
+                    id="lessonType"
+                    th:field="*{lessonType}"
+                    required
+                  >
+                    <option value="">Выберите тип занятия</option>
+                    <option
+                      th:each="type : ${lessonTypes}"
+                      th:value="${type}"
+                      th:text="${type.displayName}"
+                    ></option>
+                  </select>
+                  <div
+                    class="invalid-feedback"
+                    th:if="${#fields.hasErrors('lessonType')}"
+                    th:errors="*{lessonType}"
+                  ></div>
+                </div>
+
+                <div class="mb-3">
+                  <label for="semester" class="form-label">Семестр</label>
+                  <select
+                    class="form-select"
+                    id="semester"
+                    th:field="*{semester}"
+                    required
+                  >
+                    <option value="">Выберите семестр</option>
+                    <option
+                      th:each="sem : ${semesters}"
+                      th:value="${sem.id}"
+                      th:text="${sem.name + ' (' + #temporals.format(sem.startDate, 'dd.MM.yyyy') + ' - ' + #temporals.format(sem.endDate, 'dd.MM.yyyy') + ')'}"
+                    ></option>
+                  </select>
+                  <div
+                    class="invalid-feedback"
+                    th:if="${#fields.hasErrors('semester')}"
+                    th:errors="*{semester}"
+                  ></div>
+                </div>
+
+                <div class="row mb-4">
+                  <div class="col-md-6">
+                    <label for="startTime" class="form-label"
+                      >Время начала</label
+                    >
+                    <input
+                      type="time"
+                      class="form-control"
+                      id="startTime"
+                      th:field="*{startTime}"
+                      required
+                    />
+                    <div
+                      class="invalid-feedback"
+                      th:if="${#fields.hasErrors('startTime')}"
+                      th:errors="*{startTime}"
+                    ></div>
+                  </div>
+                  <div class="col-md-6">
+                    <label for="endTime" class="form-label"
+                      >Время окончания</label
+                    >
+                    <input
+                      type="time"
+                      class="form-control"
+                      id="endTime"
+                      th:field="*{endTime}"
+                      required
+                    />
+                    <div
+                      class="invalid-feedback"
+                      th:if="${#fields.hasErrors('endTime')}"
+                      th:errors="*{endTime}"
+                    ></div>
+                  </div>
+                </div>
+
+                <!-- Переключатель типа расписания -->
+                <div class="mb-4">
+                  <div class="form-check form-switch">
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      id="scheduleTypeSwitch"
+                      th:checked="${scheduleEntry.isRegular != null && scheduleEntry.isRegular}"
+                      onchange="toggleScheduleType(this.checked)"
+                    />
+                    <label class="form-check-label" for="scheduleTypeSwitch">
+                      Регулярное занятие
+                    </label>
+                    <input
+                      type="hidden"
+                      id="isRegularHidden"
+                      th:field="*{isRegular}"
+                    />
+                    <p class="text-muted mt-1 mb-0 small">
+                      <i class="bi bi-info-circle"></i>
+                      Переключите, чтобы указать регулярное занятие (проводится
+                      каждую неделю в один и тот же день) или разовое занятие
+                      (проводится один раз в конкретную дату).
+                    </p>
+                  </div>
+                </div>
+
+                <!-- Контейнер для регулярного расписания -->
+                <div
+                  id="regularScheduleContainer"
+                  th:classappend="${scheduleEntry.isRegular != null && scheduleEntry.isRegular ? 'active' : ''}"
+                >
+                  <div class="mb-3">
+                    <label for="dayOfWeek" class="form-label"
+                      >День недели</label
+                    >
+                    <select
+                      class="form-select"
+                      id="dayOfWeek"
+                      th:field="*{dayOfWeek}"
+                    >
+                      <option value="">Выберите день недели</option>
+                      <option value="MONDAY">Понедельник</option>
+                      <option value="TUESDAY">Вторник</option>
+                      <option value="WEDNESDAY">Среда</option>
+                      <option value="THURSDAY">Четверг</option>
+                      <option value="FRIDAY">Пятница</option>
+                      <option value="SATURDAY">Суббота</option>
+                      <option value="SUNDAY">Воскресенье</option>
+                    </select>
+                    <div
+                      class="invalid-feedback"
+                      th:if="${#fields.hasErrors('dayOfWeek')}"
+                      th:errors="*{dayOfWeek}"
+                    ></div>
+                  </div>
+                </div>
+
+                <!-- Контейнер для конкретной даты -->
+                <div
+                  id="specificDateContainer"
+                  th:classappend="${scheduleEntry.isRegular == null || !scheduleEntry.isRegular ? 'active' : ''}"
+                >
+                  <div class="mb-3">
+                    <label for="specificDate" class="form-label"
+                      >Дата занятия</label
+                    >
+                    <input
+                      type="date"
+                      class="form-control"
+                      id="specificDate"
+                      th:field="*{specificDate}"
+                    />
+                    <div
+                      class="invalid-feedback"
+                      th:if="${#fields.hasErrors('specificDate')}"
+                      th:errors="*{specificDate}"
+                    ></div>
+                  </div>
+                </div>
+
+                <!-- Комментарий -->
+                <div class="mb-3">
+                  <label for="comment" class="form-label">Комментарий</label>
+                  <textarea
+                    class="form-control"
+                    id="comment"
+                    th:field="*{comment}"
+                    rows="3"
+                    placeholder="Дополнительная информация о занятии"
+                  ></textarea>
+                  <div
+                    class="invalid-feedback"
+                    th:if="${#fields.hasErrors('comment')}"
+                    th:errors="*{comment}"
+                  ></div>
+                </div>
+
+                <div class="text-end mt-4">
+                  <a
+                    th:href="@{/admin/schedule}"
+                    class="btn btn-outline-secondary me-2"
+                    >Отмена</a
+                  >
+                  <button type="submit" class="btn btn-warning text-white">
+                    Сохранить
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+              <h5 class="mb-0">Информация</h5>
+            </div>
+            <div class="card-body">
+              <p>Заполните информацию о занятии:</p>
+              <ul>
+                <li>Выберите предмет, преподавателя, группу и аудиторию</li>
+                <li>Укажите тип занятия и семестр</li>
+                <li>Задайте время начала и окончания занятия</li>
+                <li>Выберите, регулярное это занятие или разовое:</li>
+                <ul>
+                  <li>
+                    <strong>Регулярное</strong> - проводится еженедельно в один
+                    и тот же день недели
+                  </li>
+                  <li>
+                    <strong>Разовое</strong> - проводится один раз в конкретную
+                    дату
+                  </li>
+                </ul>
+              </ul>
+              <p>
+                При добавлении занятия система проверит доступность указанных
+                ресурсов (преподавателя, группы, аудитории) на выбранное время.
+              </p>
+            </div>
+          </div>
+
+          <div class="card" th:if="${scheduleEntry.id != null}">
+            <div class="card-header bg-warning text-white">
+              <h5 class="mb-0">Конфликты</h5>
+            </div>
+            <div class="card-body">
+              <p
+                th:if="${teacherConflicts != null && !teacherConflicts.isEmpty()}"
+                class="text-danger"
+              >
+                <i class="bi bi-exclamation-triangle"></i>
+                <strong>Конфликты преподавателя:</strong><br />
+                Преподаватель занят в это время. Проверьте другие занятия.
+              </p>
+              <p
+                th:if="${groupConflicts != null && !groupConflicts.isEmpty()}"
+                class="text-danger"
+              >
+                <i class="bi bi-exclamation-triangle"></i>
+                <strong>Конфликты группы:</strong><br />
+                У группы есть другие занятия в это время.
+              </p>
+              <p
+                th:if="${classroomConflicts != null && !classroomConflicts.isEmpty()}"
+                class="text-danger"
+              >
+                <i class="bi bi-exclamation-triangle"></i>
+                <strong>Конфликты аудитории:</strong><br />
+                Аудитория занята в указанное время.
+              </p>
+              <p
+                th:if="${(teacherConflicts == null || teacherConflicts.isEmpty()) && 
+                          (groupConflicts == null || groupConflicts.isEmpty()) && 
+                          (classroomConflicts == null || classroomConflicts.isEmpty())}"
+                class="text-success"
+              >
+                <i class="bi bi-check-circle"></i> Конфликтов не обнаружено.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="bg-dark text-white mt-5 py-3">
+      <div class="container text-center">
+        <p class="mb-0">&copy; 2023 Система расписания занятий</p>
+      </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      // Функция для переключения между регулярным и разовым занятием
+      function toggleScheduleType(isRegular) {
+        document.getElementById("isRegularHidden").value = isRegular
+
+        const regularContainer = document.getElementById(
+          "regularScheduleContainer"
+        )
+        const specificDateContainer = document.getElementById(
+          "specificDateContainer"
+        )
+
+        if (isRegular) {
+          regularContainer.classList.add("active")
+          specificDateContainer.classList.remove("active")
+          document.getElementById("dayOfWeek").setAttribute("required", "")
+          document.getElementById("specificDate").removeAttribute("required")
+        } else {
+          regularContainer.classList.remove("active")
+          specificDateContainer.classList.add("active")
+          document.getElementById("dayOfWeek").removeAttribute("required")
+          document.getElementById("specificDate").setAttribute("required", "")
+        }
+      }
+
+      // Инициализация при загрузке страницы
+      document.addEventListener("DOMContentLoaded", function () {
+        const isRegular =
+          document.getElementById("isRegularHidden").value === "true"
+        document.getElementById("scheduleTypeSwitch").checked = isRegular
+        toggleScheduleType(isRegular)
+      })
+    </script>
+  </body>
+</html>

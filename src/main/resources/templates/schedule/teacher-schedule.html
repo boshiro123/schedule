@@ -6,7 +6,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Расписание группы</title>
+    <title>Расписание преподавателя</title>
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
       rel="stylesheet"
@@ -135,17 +135,17 @@
               <li class="breadcrumb-item">
                 <a th:href="@{/schedule/public}">Расписание</a>
               </li>
-              <li class="breadcrumb-item active" th:text="${group.name}">
-                Группа
+              <li class="breadcrumb-item active" th:text="${teacher.fullName}">
+                Преподаватель
               </li>
             </ol>
           </nav>
           <h1 class="mb-4">
-            Расписание группы <span th:text="${group.name}"></span>
+            Расписание преподавателя <span th:text="${teacher.fullName}"></span>
           </h1>
 
           <div th:if="${scheduleEntries.isEmpty()}" class="alert alert-info">
-            Для этой группы пока нет занятий в расписании.
+            Для этого преподавателя пока нет занятий в расписании.
           </div>
 
           <div class="mb-4">
@@ -192,7 +192,7 @@
                   <div class="accordion-body">
                     <div
                       th:each="entry : ${scheduleEntries}"
-                      th:if="${entry.getDayOfWeek() != null && entry.getDayOfWeek().getValue() == 1}"
+                      th:if="${entry.getDayOfWeek().getValue() == 1}"
                       th:class="'card lesson-card lesson-type-' + ${entry.getLessonType()}"
                     >
                       <div class="card-body">
@@ -225,9 +225,9 @@
                         </h6>
                         <div class="card-text">
                           <div>
-                            <strong>Преподаватель:</strong>
-                            <span th:text="${entry.getTeacher().getFullName()}"
-                              >ФИО преподавателя</span
+                            <strong>Группа:</strong>
+                            <span th:text="${entry.getGroup().getName()}"
+                              >Группа</span
                             >
                           </div>
                           <div>
@@ -276,7 +276,7 @@
                   <div class="accordion-body">
                     <div
                       th:each="entry : ${scheduleEntries}"
-                      th:if="${entry.getDayOfWeek() != null && entry.getDayOfWeek().getValue() == 2}"
+                      th:if="${entry.getDayOfWeek().getValue() == 2}"
                       th:class="'card lesson-card lesson-type-' + ${entry.getLessonType()}"
                     >
                       <div class="card-body">
@@ -309,9 +309,9 @@
                         </h6>
                         <div class="card-text">
                           <div>
-                            <strong>Преподаватель:</strong>
-                            <span th:text="${entry.getTeacher().getFullName()}"
-                              >ФИО преподавателя</span
+                            <strong>Группа:</strong>
+                            <span th:text="${entry.getGroup().getName()}"
+                              >Группа</span
                             >
                           </div>
                           <div>
@@ -360,7 +360,7 @@
                   <div class="accordion-body">
                     <div
                       th:each="entry : ${scheduleEntries}"
-                      th:if="${entry.getDayOfWeek() != null && entry.getDayOfWeek().getValue() == 3}"
+                      th:if="${entry.getDayOfWeek().getValue() == 3}"
                       th:class="'card lesson-card lesson-type-' + ${entry.getLessonType()}"
                     >
                       <div class="card-body">
@@ -393,9 +393,9 @@
                         </h6>
                         <div class="card-text">
                           <div>
-                            <strong>Преподаватель:</strong>
-                            <span th:text="${entry.getTeacher().getFullName()}"
-                              >ФИО преподавателя</span
+                            <strong>Группа:</strong>
+                            <span th:text="${entry.getGroup().getName()}"
+                              >Группа</span
                             >
                           </div>
                           <div>
@@ -444,7 +444,7 @@
                   <div class="accordion-body">
                     <div
                       th:each="entry : ${scheduleEntries}"
-                      th:if="${entry.getDayOfWeek() != null && entry.getDayOfWeek().getValue() == 4}"
+                      th:if="${entry.getDayOfWeek().getValue() == 4}"
                       th:class="'card lesson-card lesson-type-' + ${entry.getLessonType()}"
                     >
                       <div class="card-body">
@@ -477,9 +477,9 @@
                         </h6>
                         <div class="card-text">
                           <div>
-                            <strong>Преподаватель:</strong>
-                            <span th:text="${entry.getTeacher().getFullName()}"
-                              >ФИО преподавателя</span
+                            <strong>Группа:</strong>
+                            <span th:text="${entry.getGroup().getName()}"
+                              >Группа</span
                             >
                           </div>
                           <div>
@@ -528,7 +528,7 @@
                   <div class="accordion-body">
                     <div
                       th:each="entry : ${scheduleEntries}"
-                      th:if="${entry.getDayOfWeek() != null && entry.getDayOfWeek().getValue() == 5}"
+                      th:if="${entry.getDayOfWeek().getValue() == 5}"
                       th:class="'card lesson-card lesson-type-' + ${entry.getLessonType()}"
                     >
                       <div class="card-body">
@@ -561,9 +561,9 @@
                         </h6>
                         <div class="card-text">
                           <div>
-                            <strong>Преподаватель:</strong>
-                            <span th:text="${entry.getTeacher().getFullName()}"
-                              >ФИО преподавателя</span
+                            <strong>Группа:</strong>
+                            <span th:text="${entry.getGroup().getName()}"
+                              >Группа</span
                             >
                           </div>
                           <div>
@@ -612,7 +612,7 @@
                   <div class="accordion-body">
                     <div
                       th:each="entry : ${scheduleEntries}"
-                      th:if="${entry.getDayOfWeek() != null && entry.getDayOfWeek().getValue() == 6}"
+                      th:if="${entry.getDayOfWeek().getValue() == 6}"
                       th:class="'card lesson-card lesson-type-' + ${entry.getLessonType()}"
                     >
                       <div class="card-body">
@@ -645,9 +645,9 @@
                         </h6>
                         <div class="card-text">
                           <div>
-                            <strong>Преподаватель:</strong>
-                            <span th:text="${entry.getTeacher().getFullName()}"
-                              >ФИО преподавателя</span
+                            <strong>Группа:</strong>
+                            <span th:text="${entry.getGroup().getName()}"
+                              >Группа</span
                             >
                           </div>
                           <div>
@@ -687,7 +687,7 @@
                   <th>Время</th>
                   <th>Предмет</th>
                   <th>Тип</th>
-                  <th>Преподаватель</th>
+                  <th>Группа</th>
                   <th>Аудитория</th>
                   <th>Дата</th>
                 </tr>
@@ -711,9 +711,7 @@
                   <td th:text="${entry.getLessonType().getDisplayName()}">
                     Тип
                   </td>
-                  <td th:text="${entry.getTeacher().getFullName()}">
-                    Преподаватель
-                  </td>
+                  <td th:text="${entry.getGroup().getName()}">Группа</td>
                   <td th:text="${entry.getClassroom().getNumber()}">
                     Аудитория
                   </td>
