@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+  lang="ru"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Управление группами</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css"
+    />
+    <style>
+      .table-actions {
+        white-space: nowrap;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+      <div class="container">
+        <a class="navbar-brand" href="/">Расписание занятий</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav me-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="/">Главная</a>
+            </li>
+            <li class="nav-item" sec:authorize="hasAuthority('DISPATCHER')">
+              <a class="nav-link" th:href="@{/admin/dashboard}"
+                >Панель администратора</a
+              >
+            </li>
+          </ul>
+          <ul class="navbar-nav">
+            <li class="nav-item" sec:authorize="isAuthenticated()">
+              <a class="nav-link" th:href="@{/change-password}"
+                >Изменить пароль</a
+              >
+            </li>
+            <li class="nav-item" sec:authorize="isAuthenticated()">
+              <a class="nav-link" th:href="@{/logout}">Выйти</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container mt-4">
+      <div class="row mb-4">
+        <div class="col-md-6">
+          <h1>Управление группами</h1>
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item">
+                <a th:href="@{/admin/dashboard}">Панель администратора</a>
+              </li>
+              <li class="breadcrumb-item active" aria-current="page">Группы</li>
+            </ol>
+          </nav>
+        </div>
+        <div class="col-md-6 text-end">
+          <a th:href="@{/admin/groups/new}" class="btn btn-primary">
+            <i class="bi bi-people"></i> Добавить группу
+          </a>
+        </div>
+      </div>
+
+      <div
+        class="alert alert-success"
+        th:if="${success}"
+        th:text="${success}"
+      ></div>
+
+      <div class="alert alert-danger" th:if="${error}" th:text="${error}"></div>
+
+      <div class="card">
+        <div class="card-header bg-success text-white">
+          <h5 class="mb-0">Список групп</h5>
+        </div>
+        <div class="card-body">
+          <div th:if="${#lists.isEmpty(groups)}" class="alert alert-info">
+            <i class="bi bi-info-circle"></i> Группы не найдены.
+          </div>
+
+          <div class="table-responsive" th:unless="${#lists.isEmpty(groups)}">
+            <table class="table table-striped table-hover">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Название</th>
+                  <th>Год</th>
+                  <th>Факультет</th>
+                  <th>Специализация</th>
+                  <th>Кол-во студентов</th>
+                  <th>Действия</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr th:each="group : ${groups}">
+                  <td th:text="${group.id}"></td>
+                  <td th:text="${group.name}"></td>
+                  <td th:text="${group.year}"></td>
+                  <td th:text="${group.faculty}"></td>
+                  <td th:text="${group.specialization}"></td>
+                  <td th:text="${group.numberOfStudents}"></td>
+                  <td class="table-actions">
+                    <a
+                      th:href="@{/admin/groups/edit/{id}(id=${group.id})}"
+                      class="btn btn-sm btn-outline-primary me-1"
+                      title="Редактировать"
+                    >
+                      <i class="bi bi-pencil"></i>
+                    </a>
+                    <a
+                      th:href="@{/admin/groups/delete/{id}(id=${group.id})}"
+                      class="btn btn-sm btn-outline-danger"
+                      title="Удалить"
+                      onclick="return confirm('Вы уверены, что хотите удалить эту группу? Все студенты, связанные с этой группой, останутся без группы, а все занятия будут удалены.')"
+                    >
+                      <i class="bi bi-trash"></i>
+                    </a>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="bg-dark text-white mt-5 py-3">
+      <div class="container text-center">
+        <p class="mb-0">&copy; 2023 Система расписания занятий</p>
+      </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

@@ -158,13 +158,27 @@ public class AdminController {
   @PostMapping("/groups")
   public String saveGroup(@Valid @ModelAttribute("group") StudentGroup group,
       BindingResult bindingResult,
-      RedirectAttributes redirectAttributes) {
+      RedirectAttributes redirectAttributes,
+      Model model) {
     if (bindingResult.hasErrors()) {
       return "admin/groups/form";
     }
 
+    // Проверка уникальности названия группы
+    Optional<StudentGroup> existingGroup = studentGroupService.findGroupByName(group.getName());
+    if (existingGroup.isPresent() && (group.getId() == null || !group.getId().equals(existingGroup.get().getId()))) {
+      model.addAttribute("nameError", "Группа с таким названием уже существует");
+      return "admin/groups/form";
+    }
+
     studentGroupService.saveGroup(group);
-    redirectAttributes.addFlashAttribute("success", "Группа успешно добавлена");
+
+    if (group.getId() == null) {
+      redirectAttributes.addFlashAttribute("success", "Группа успешно добавлена");
+    } else {
+      redirectAttributes.addFlashAttribute("success", "Группа успешно обновлена");
+    }
+
     return "redirect:/admin/groups";
   }
 
@@ -180,6 +194,34 @@ public class AdminController {
 
   @GetMapping("/groups/delete/{id}")
   public String deleteGroup(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+    // Проверяем существование группы
+    Optional<StudentGroup> groupOpt = studentGroupService.findGroupById(id);
+    if (!groupOpt.isPresent()) {
+      redirectAttributes.addFlashAttribute("error", "Группа не найдена");
+      return "redirect:/admin/groups";
+    }
+
+    StudentGroup group = groupOpt.get();
+
+    // Проверяем, есть ли занятия у этой группы
+    List<ScheduleEntry> groupSchedule = scheduleService.findScheduleForGroup(group);
+    if (!groupSchedule.isEmpty()) {
+      redirectAttributes.addFlashAttribute("error",
+          "Невозможно удалить группу, так как у неё есть запланированные занятия. " +
+              "Сначала удалите все занятия этой группы.");
+      return "redirect:/admin/groups";
+    }
+
+    // Проверяем, есть ли студенты в этой группе
+    if (group.getStudents() != null && !group.getStudents().isEmpty()) {
+      // Если есть студенты, то отвязываем их от группы перед удалением
+      List<User> students = group.getStudents();
+      for (User student : students) {
+        student.setGroup(null);
+        userService.updateUser(student);
+      }
+    }
+
     studentGroupService.deleteGroup(id);
     redirectAttributes.addFlashAttribute("success", "Группа успешно удалена");
     return "redirect:/admin/groups";
