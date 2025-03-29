@@ -146,6 +146,11 @@
                         class="btn btn-primary btn-sm"
                         >Посмотреть расписание</a
                       >
+                      <a
+                        th:href="@{'/schedule/public/group/' + ${group.getId()} + '/export'}"
+                        class="btn btn-outline-success btn-sm mt-2"
+                        >Скачать Excel</a
+                      >
                     </div>
                   </div>
                 </div>
@@ -179,6 +184,11 @@
                         th:href="@{'/schedule/public/teacher/' + ${teacher.getId()}}"
                         class="btn btn-success btn-sm"
                         >Посмотреть расписание</a
+                      >
+                      <a
+                        th:href="@{'/schedule/public/teacher/' + ${teacher.getId()} + '/export'}"
+                        class="btn btn-outline-success btn-sm mt-2"
+                        >Скачать Excel</a
                       >
                     </div>
                   </div>

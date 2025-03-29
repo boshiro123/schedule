@@ -216,6 +216,13 @@
                   Моё расписание
                 </a>
                 <a
+                  th:href="@{/schedule/personal/export}"
+                  class="list-group-item list-group-item-action"
+                  sec:authorize="isAuthenticated()"
+                >
+                  Скачать моё расписание (Excel)
+                </a>
+                <a
                   th:href="@{/admin}"
                   class="list-group-item list-group-item-action"
                   sec:authorize="hasRole('ADMIN')"
