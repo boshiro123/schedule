@@ -698,7 +698,7 @@
                   th:class="${entry.getIsRegular() ? '' : 'table-warning'}"
                 >
                   <td
-                    th:text="${T(java.time.format.TextStyle).FULL.getDisplayName(entry.getDayOfWeek(), T(java.util.Locale).forLanguageTag('ru'))}"
+                    th:text="${entry.getDayOfWeek() != null ? entry.getDayOfWeek().getDisplayName(T(java.time.format.TextStyle).FULL, T(java.util.Locale).forLanguageTag('ru')) : '-'}"
                   >
                     День недели
                   </td>

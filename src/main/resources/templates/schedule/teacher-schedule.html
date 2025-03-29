@@ -192,7 +192,7 @@
                   <div class="accordion-body">
                     <div
                       th:each="entry : ${scheduleEntries}"
-                      th:if="${entry.getDayOfWeek().getValue() == 1}"
+                      th:if="${entry.getDayOfWeek() != null && entry.getDayOfWeek().getValue() == 1}"
                       th:class="'card lesson-card lesson-type-' + ${entry.getLessonType()}"
                     >
                       <div class="card-body">
@@ -276,7 +276,7 @@
                   <div class="accordion-body">
                     <div
                       th:each="entry : ${scheduleEntries}"
-                      th:if="${entry.getDayOfWeek().getValue() == 2}"
+                      th:if="${entry.getDayOfWeek() != null && entry.getDayOfWeek().getValue() == 2}"
                       th:class="'card lesson-card lesson-type-' + ${entry.getLessonType()}"
                     >
                       <div class="card-body">
@@ -360,7 +360,7 @@
                   <div class="accordion-body">
                     <div
                       th:each="entry : ${scheduleEntries}"
-                      th:if="${entry.getDayOfWeek().getValue() == 3}"
+                      th:if="${entry.getDayOfWeek() != null && entry.getDayOfWeek().getValue() == 3}"
                       th:class="'card lesson-card lesson-type-' + ${entry.getLessonType()}"
                     >
                       <div class="card-body">
@@ -444,7 +444,7 @@
                   <div class="accordion-body">
                     <div
                       th:each="entry : ${scheduleEntries}"
-                      th:if="${entry.getDayOfWeek().getValue() == 4}"
+                      th:if="${entry.getDayOfWeek() != null && entry.getDayOfWeek().getValue() == 4}"
                       th:class="'card lesson-card lesson-type-' + ${entry.getLessonType()}"
                     >
                       <div class="card-body">
@@ -528,7 +528,7 @@
                   <div class="accordion-body">
                     <div
                       th:each="entry : ${scheduleEntries}"
-                      th:if="${entry.getDayOfWeek().getValue() == 5}"
+                      th:if="${entry.getDayOfWeek() != null && entry.getDayOfWeek().getValue() == 5}"
                       th:class="'card lesson-card lesson-type-' + ${entry.getLessonType()}"
                     >
                       <div class="card-body">
@@ -612,7 +612,7 @@
                   <div class="accordion-body">
                     <div
                       th:each="entry : ${scheduleEntries}"
-                      th:if="${entry.getDayOfWeek().getValue() == 6}"
+                      th:if="${entry.getDayOfWeek() != null && entry.getDayOfWeek().getValue() == 6}"
                       th:class="'card lesson-card lesson-type-' + ${entry.getLessonType()}"
                     >
                       <div class="card-body">
@@ -698,7 +698,7 @@
                   th:class="${entry.getIsRegular() ? '' : 'table-warning'}"
                 >
                   <td
-                    th:text="${T(java.time.format.TextStyle).FULL.getDisplayName(entry.getDayOfWeek(), T(java.util.Locale).forLanguageTag('ru'))}"
+                    th:text="${entry.getDayOfWeek() != null ? entry.getDayOfWeek().getDisplayName(T(java.time.format.TextStyle).FULL, T(java.util.Locale).forLanguageTag('ru')) : '-'}"
                   >
                     День недели
                   </td>

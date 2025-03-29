@@ -1,0 +1,74 @@
+/* Основные стили */
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.6;
+}
+
+/* Стили для навигации */
+.navbar {
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Стили для карточек и контейнеров */
+.card {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Стили для расписания */
+.schedule-day {
+  margin-bottom: 20px;
+}
+
+.lesson-card {
+  border-left: 4px solid #007bff;
+  margin-bottom: 10px;
+  transition: all 0.3s;
+}
+
+.lesson-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.lesson-type-LECTURE {
+  border-left-color: #007bff;
+}
+
+.lesson-type-SEMINAR {
+  border-left-color: #28a745;
+}
+
+.lesson-type-LABORATORY {
+  border-left-color: #6f42c1;
+}
+
+.lesson-type-PRACTICE {
+  border-left-color: #fd7e14;
+}
+
+.lesson-type-EXAM {
+  border-left-color: #dc3545;
+}
+
+.lesson-type-TEST {
+  border-left-color: #ffc107;
+}
+
+.lesson-type-CONSULTATION {
+  border-left-color: #17a2b8;
+}
+
+.lesson-type-ADDITIONAL {
+  border-left-color: #20c997;
+}
+
+.time-slot {
+  font-weight: bold;
+  min-width: 120px;
+}
