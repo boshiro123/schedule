@@ -2,6 +2,7 @@ package com.schedule.controllers;
 
 import com.schedule.models.ScheduleEntry;
 import com.schedule.models.StudentGroup;
+import com.schedule.models.Subject;
 import com.schedule.models.User;
 import com.schedule.models.UserRole;
 import com.schedule.service.ScheduleService;
@@ -285,5 +286,82 @@ public class AdminController {
     scheduleService.deleteScheduleEntry(id);
     redirectAttributes.addFlashAttribute("success", "Запись в расписании успешно удалена");
     return "redirect:/admin/schedule";
+  }
+
+  // Управление предметами
+  @GetMapping("/subjects")
+  public String listSubjects(Model model) {
+    List<Subject> subjects = subjectService.findAllSubjects();
+    model.addAttribute("subjects", subjects);
+    return "admin/subjects/list";
+  }
+
+  @GetMapping("/subjects/new")
+  public String newSubjectForm(Model model) {
+    model.addAttribute("subject", new Subject());
+    return "admin/subjects/form";
+  }
+
+  @PostMapping("/subjects")
+  public String saveSubject(@Valid @ModelAttribute("subject") Subject subject,
+      BindingResult bindingResult,
+      RedirectAttributes redirectAttributes,
+      Model model) {
+    if (bindingResult.hasErrors()) {
+      return "admin/subjects/form";
+    }
+
+    // Проверка уникальности названия предмета
+    Optional<Subject> existingSubject = subjectService.findSubjectByName(subject.getName());
+    if (existingSubject.isPresent()
+        && (subject.getId() == null || !subject.getId().equals(existingSubject.get().getId()))) {
+      model.addAttribute("nameError", "Предмет с таким названием уже существует");
+      return "admin/subjects/form";
+    }
+
+    subjectService.saveSubject(subject);
+
+    if (subject.getId() == null) {
+      redirectAttributes.addFlashAttribute("success", "Предмет успешно добавлен");
+    } else {
+      redirectAttributes.addFlashAttribute("success", "Предмет успешно обновлен");
+    }
+
+    return "redirect:/admin/subjects";
+  }
+
+  @GetMapping("/subjects/edit/{id}")
+  public String editSubjectForm(@PathVariable Long id, Model model) {
+    Optional<Subject> subjectOpt = subjectService.findSubjectById(id);
+    if (subjectOpt.isPresent()) {
+      model.addAttribute("subject", subjectOpt.get());
+      return "admin/subjects/form";
+    }
+    return "redirect:/admin/subjects";
+  }
+
+  @GetMapping("/subjects/delete/{id}")
+  public String deleteSubject(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+    // Проверяем существование предмета
+    Optional<Subject> subjectOpt = subjectService.findSubjectById(id);
+    if (!subjectOpt.isPresent()) {
+      redirectAttributes.addFlashAttribute("error", "Предмет не найден");
+      return "redirect:/admin/subjects";
+    }
+
+    Subject subject = subjectOpt.get();
+
+    // Проверяем, есть ли занятия с этим предметом
+    List<ScheduleEntry> subjectSchedule = scheduleService.findScheduleEntriesBySubject(subject);
+    if (!subjectSchedule.isEmpty()) {
+      redirectAttributes.addFlashAttribute("error",
+          "Невозможно удалить предмет, так как с ним связаны запланированные занятия. " +
+              "Сначала удалите все занятия по этому предмету.");
+      return "redirect:/admin/subjects";
+    }
+
+    subjectService.deleteSubject(id);
+    redirectAttributes.addFlashAttribute("success", "Предмет успешно удален");
+    return "redirect:/admin/subjects";
   }
 }

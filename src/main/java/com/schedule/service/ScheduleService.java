@@ -38,6 +38,10 @@ public class ScheduleService {
     return scheduleEntryRepository.findByClassroomOrderBySpecificDateAscStartTimeAsc(classroom);
   }
 
+  public List<ScheduleEntry> findScheduleEntriesBySubject(Subject subject) {
+    return scheduleEntryRepository.findBySubjectOrderBySpecificDateAscStartTimeAsc(subject);
+  }
+
   public boolean isClassroomAvailable(Classroom classroom, LocalDate date, LocalTime startTime, LocalTime endTime) {
     // Проверяем, есть ли занятия в этой аудитории в указанное время
     List<ScheduleEntry> overlappingEntries = scheduleEntryRepository.findOverlappingEntriesForClassroom(

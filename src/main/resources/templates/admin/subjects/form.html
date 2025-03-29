@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+  lang="ru"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title
+      th:text="${subject.id == null ? 'Добавление предмета' : 'Редактирование предмета'}"
+    ></title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css"
+    />
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+      <div class="container">
+        <a class="navbar-brand" href="/">Расписание занятий</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav me-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="/">Главная</a>
+            </li>
+            <li class="nav-item" sec:authorize="hasAuthority('DISPATCHER')">
+              <a class="nav-link" th:href="@{/admin/dashboard}"
+                >Панель администратора</a
+              >
+            </li>
+          </ul>
+          <ul class="navbar-nav">
+            <li class="nav-item" sec:authorize="isAuthenticated()">
+              <a class="nav-link" th:href="@{/change-password}"
+                >Изменить пароль</a
+              >
+            </li>
+            <li class="nav-item" sec:authorize="isAuthenticated()">
+              <a class="nav-link" th:href="@{/logout}">Выйти</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container mt-4">
+      <div class="row mb-4">
+        <div class="col">
+          <h1
+            th:text="${subject.id == null ? 'Добавление предмета' : 'Редактирование предмета'}"
+          ></h1>
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item">
+                <a th:href="@{/admin/dashboard}">Панель администратора</a>
+              </li>
+              <li class="breadcrumb-item">
+                <a th:href="@{/admin/subjects}">Предметы</a>
+              </li>
+              <li
+                class="breadcrumb-item active"
+                aria-current="page"
+                th:text="${subject.id == null ? 'Добавление' : 'Редактирование'}"
+              ></li>
+            </ol>
+          </nav>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-8">
+          <div class="card">
+            <div class="card-header bg-info text-white">
+              <h5 class="mb-0">Информация о предмете</h5>
+            </div>
+            <div class="card-body">
+              <form
+                th:action="@{/admin/subjects}"
+                method="post"
+                th:object="${subject}"
+              >
+                <input type="hidden" th:field="*{id}" />
+
+                <!-- Название предмета -->
+                <div class="mb-3">
+                  <label for="name" class="form-label">Название предмета</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="name"
+                    th:field="*{name}"
+                    required
+                  />
+                  <div
+                    class="invalid-feedback"
+                    th:if="${#fields.hasErrors('name')}"
+                    th:errors="*{name}"
+                  ></div>
+                  <div
+                    class="text-danger"
+                    th:if="${nameError}"
+                    th:text="${nameError}"
+                  ></div>
+                </div>
+
+                <!-- Описание предмета -->
+                <div class="mb-3">
+                  <label for="description" class="form-label"
+                    >Описание предмета</label
+                  >
+                  <textarea
+                    class="form-control"
+                    id="description"
+                    th:field="*{description}"
+                    rows="3"
+                  ></textarea>
+                  <div
+                    class="invalid-feedback"
+                    th:if="${#fields.hasErrors('description')}"
+                    th:errors="*{description}"
+                  ></div>
+                </div>
+
+                <!-- Часов в семестр -->
+                <div class="mb-3">
+                  <label for="hoursPerSemester" class="form-label"
+                    >Часов в семестр</label
+                  >
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="hoursPerSemester"
+                    th:field="*{hoursPerSemester}"
+                    min="1"
+                    max="500"
+                  />
+                  <div
+                    class="invalid-feedback"
+                    th:if="${#fields.hasErrors('hoursPerSemester')}"
+                    th:errors="*{hoursPerSemester}"
+                  ></div>
+                </div>
+
+                <!-- Кафедра -->
+                <div class="mb-3">
+                  <label for="department" class="form-label">Кафедра</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="department"
+                    th:field="*{department}"
+                  />
+                  <div
+                    class="invalid-feedback"
+                    th:if="${#fields.hasErrors('department')}"
+                    th:errors="*{department}"
+                  ></div>
+                </div>
+
+                <div class="text-end mt-4">
+                  <a
+                    th:href="@{/admin/subjects}"
+                    class="btn btn-outline-secondary me-2"
+                    >Отмена</a
+                  >
+                  <button type="submit" class="btn btn-info text-white">
+                    Сохранить
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="card">
+            <div class="card-header bg-primary text-white">
+              <h5 class="mb-0">Информация</h5>
+            </div>
+            <div class="card-body">
+              <p>Введите информацию о предмете:</p>
+              <ul>
+                <li>
+                  Название предмета должно быть понятным и отражать суть
+                  дисциплины
+                </li>
+                <li>
+                  Описание предмета можно добавить для более детальной
+                  информации
+                </li>
+                <li>Количество часов в семестр - общая нагрузка по предмету</li>
+                <li>
+                  Кафедра - подразделение, отвечающее за преподавание предмета
+                </li>
+              </ul>
+              <p th:if="${subject.id != null}" class="mb-0 alert alert-warning">
+                <i class="bi bi-exclamation-triangle"></i> Будьте внимательны
+                при изменении информации о предмете, так как это может повлиять
+                на расписание.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="bg-dark text-white mt-5 py-3">
+      <div class="container text-center">
+        <p class="mb-0">&copy; 2023 Система расписания занятий</p>
+      </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
