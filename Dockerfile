@@ -8,7 +8,7 @@ COPY target/${JAR_FILE} /app/${JAR_FILE}
 #     chmod 777 /app/images
 
 CMD ["java", "-jar", "schedule-0.0.1-SNAPSHOT.jar"]
-EXPOSE 8081
+EXPOSE 8010
 
 # Копируем изображения
 # COPY uploads/* /app/images/
